@@ -1,8 +1,25 @@
 import { Router, type IRouter } from "express";
 import { db, donorsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
 
 const router: IRouter = Router();
+
+const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"] as const;
+
+const createDonorSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters").max(100),
+  bloodGroup: z.enum(BLOOD_GROUPS, { error: "Invalid blood group" }),
+  latitude: z.number({ error: "Latitude must be a number" }).min(-90).max(90),
+  longitude: z.number({ error: "Longitude must be a number" }).min(-180).max(180),
+  phone: z.string().min(7, "Phone number too short").max(20),
+  lastDonationDate: z.string().nullable().optional(),
+  available: z.boolean().optional().default(true),
+});
+
+const updateAvailabilitySchema = z.object({
+  available: z.boolean({ error: "available must be a boolean" }),
+});
 
 router.get("/donors", async (req, res) => {
   try {
@@ -15,11 +32,16 @@ router.get("/donors", async (req, res) => {
 });
 
 router.post("/donors", async (req, res) => {
+  const parsed = createDonorSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({
+      error: "Validation failed",
+      details: parsed.error.flatten().fieldErrors,
+    });
+  }
+
   try {
-    const { name, bloodGroup, latitude, longitude, lastDonationDate, phone } = req.body;
-    if (!name || !bloodGroup || latitude == null || longitude == null || !phone) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
+    const { name, bloodGroup, latitude, longitude, lastDonationDate, phone, available } = parsed.data;
     const [donor] = await db.insert(donorsTable).values({
       name,
       bloodGroup,
@@ -27,7 +49,7 @@ router.post("/donors", async (req, res) => {
       longitude,
       lastDonationDate: lastDonationDate ?? null,
       phone,
-      available: true,
+      available: available ?? true,
     }).returning();
     res.status(201).json(formatDonor(donor));
   } catch (err) {
@@ -37,14 +59,20 @@ router.post("/donors", async (req, res) => {
 });
 
 router.patch("/donors/:id/availability", async (req, res) => {
+  const id = parseInt(req.params.id);
+  if (isNaN(id)) return res.status(400).json({ error: "Invalid donor ID" });
+
+  const parsed = updateAvailabilitySchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({
+      error: "Validation failed",
+      details: parsed.error.flatten().fieldErrors,
+    });
+  }
+
   try {
-    const id = parseInt(req.params.id);
-    const { available } = req.body;
-    if (typeof available !== "boolean") {
-      return res.status(400).json({ error: "available must be a boolean" });
-    }
     const [donor] = await db.update(donorsTable)
-      .set({ available })
+      .set({ available: parsed.data.available })
       .where(eq(donorsTable.id, id))
       .returning();
     if (!donor) return res.status(404).json({ error: "Donor not found" });
