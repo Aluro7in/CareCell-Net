@@ -1,22 +1,30 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: CareCell Network API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: donors
+    description: Donor operations
+  - name: patients
+    description: Patient operations
+  - name: hospitals
+    description: Hospital operations
+  - name: requests
+    description: Emergency request operations
+  - name: ai
+    description: AI assistant operations
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +32,254 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /donors:
+    get:
+      operationId: listDonors
+      tags: [donors]
+      summary: List all donors
+      responses:
+        "200":
+          description: List of donors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Donor"
+    post:
+      operationId: createDonor
+      tags: [donors]
+      summary: Register a new donor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDonorInput"
+      responses:
+        "201":
+          description: Donor created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Donor"
+
+  /donors/{id}/availability:
+    patch:
+      operationId: updateDonorAvailability
+      tags: [donors]
+      summary: Toggle donor availability
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAvailabilityInput"
+      responses:
+        "200":
+          description: Updated donor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Donor"
+
+  /patients:
+    get:
+      operationId: listPatients
+      tags: [patients]
+      summary: List all patients
+      responses:
+        "200":
+          description: List of patients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Patient"
+    post:
+      operationId: createPatient
+      tags: [patients]
+      summary: Register a new patient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePatientInput"
+      responses:
+        "201":
+          description: Patient created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Patient"
+
+  /hospitals:
+    get:
+      operationId: listHospitals
+      tags: [hospitals]
+      summary: List all hospitals
+      responses:
+        "200":
+          description: List of hospitals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Hospital"
+
+  /hospitals/nearby:
+    get:
+      operationId: getNearbyHospitals
+      tags: [hospitals]
+      summary: Get nearby hospitals
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: lng
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: radiusKm
+          in: query
+          required: false
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Nearby hospitals with distance
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HospitalWithDistance"
+
+  /requests:
+    get:
+      operationId: listRequests
+      tags: [requests]
+      summary: List all emergency requests
+      responses:
+        "200":
+          description: List of requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmergencyRequest"
+    post:
+      operationId: createRequest
+      tags: [requests]
+      summary: Create an emergency request and match donors
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRequestInput"
+      responses:
+        "201":
+          description: Request created with matched donors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmergencyRequestWithMatches"
+
+  /requests/{id}/status:
+    patch:
+      operationId: updateRequestStatus
+      tags: [requests]
+      summary: Update request status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStatusInput"
+      responses:
+        "200":
+          description: Updated request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmergencyRequest"
+
+  /match:
+    post:
+      operationId: matchDonors
+      tags: [requests]
+      summary: Match donors for a patient without creating a request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MatchInput"
+      responses:
+        "200":
+          description: Matched donors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DonorMatch"
+
+  /ai/chat:
+    post:
+      operationId: aiChat
+      tags: [ai]
+      summary: AI assistant chat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiChatInput"
+      responses:
+        "200":
+          description: AI response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiChatResponse"
+
+  /alerts:
+    get:
+      operationId: listAlerts
+      tags: [requests]
+      summary: List recent alerts
+      responses:
+        "200":
+          description: List of alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Alert"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +287,269 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    BloodGroup:
+      type: string
+      enum: [A+, A-, B+, B-, AB+, AB-, O+, O-]
+
+    Urgency:
+      type: string
+      enum: [normal, critical]
+
+    RequestStatus:
+      type: string
+      enum: [pending, active, fulfilled, cancelled]
+
+    Donor:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        bloodGroup:
+          $ref: "#/components/schemas/BloodGroup"
+        latitude:
+          type: number
+        longitude:
+          type: number
+        lastDonationDate:
+          type: string
+          nullable: true
+        available:
+          type: boolean
+        phone:
+          type: string
+        createdAt:
+          type: string
+      required: [id, name, bloodGroup, latitude, longitude, available, phone, createdAt]
+
+    CreateDonorInput:
+      type: object
+      properties:
+        name:
+          type: string
+        bloodGroup:
+          $ref: "#/components/schemas/BloodGroup"
+        latitude:
+          type: number
+        longitude:
+          type: number
+        lastDonationDate:
+          type: string
+          nullable: true
+        phone:
+          type: string
+      required: [name, bloodGroup, latitude, longitude, phone]
+
+    UpdateAvailabilityInput:
+      type: object
+      properties:
+        available:
+          type: boolean
+      required: [available]
+
+    Patient:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        bloodGroup:
+          $ref: "#/components/schemas/BloodGroup"
+        cancerType:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        urgency:
+          $ref: "#/components/schemas/Urgency"
+        createdAt:
+          type: string
+      required: [id, name, bloodGroup, cancerType, latitude, longitude, urgency, createdAt]
+
+    CreatePatientInput:
+      type: object
+      properties:
+        name:
+          type: string
+        bloodGroup:
+          $ref: "#/components/schemas/BloodGroup"
+        cancerType:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        urgency:
+          $ref: "#/components/schemas/Urgency"
+      required: [name, bloodGroup, cancerType, latitude, longitude, urgency]
+
+    Hospital:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        bedsAvailable:
+          type: integer
+        bloodBankAvailable:
+          type: boolean
+        phone:
+          type: string
+        createdAt:
+          type: string
+      required: [id, name, address, latitude, longitude, bedsAvailable, bloodBankAvailable, phone, createdAt]
+
+    HospitalWithDistance:
+      allOf:
+        - $ref: "#/components/schemas/Hospital"
+        - type: object
+          properties:
+            distanceKm:
+              type: number
+          required: [distanceKm]
+
+    EmergencyRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        patientId:
+          type: integer
+        patientName:
+          type: string
+        bloodGroup:
+          $ref: "#/components/schemas/BloodGroup"
+        cancerType:
+          type: string
+        urgency:
+          $ref: "#/components/schemas/Urgency"
+        status:
+          $ref: "#/components/schemas/RequestStatus"
+        createdAt:
+          type: string
+      required: [id, patientId, patientName, bloodGroup, cancerType, urgency, status, createdAt]
+
+    EmergencyRequestWithMatches:
+      allOf:
+        - $ref: "#/components/schemas/EmergencyRequest"
+        - type: object
+          properties:
+            matchedDonors:
+              type: array
+              items:
+                $ref: "#/components/schemas/DonorMatch"
+          required: [matchedDonors]
+
+    CreateRequestInput:
+      type: object
+      properties:
+        name:
+          type: string
+        bloodGroup:
+          $ref: "#/components/schemas/BloodGroup"
+        cancerType:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        urgency:
+          $ref: "#/components/schemas/Urgency"
+        phone:
+          type: string
+      required: [name, bloodGroup, cancerType, latitude, longitude, urgency, phone]
+
+    UpdateStatusInput:
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/RequestStatus"
+      required: [status]
+
+    MatchInput:
+      type: object
+      properties:
+        bloodGroup:
+          $ref: "#/components/schemas/BloodGroup"
+        latitude:
+          type: number
+        longitude:
+          type: number
+        urgency:
+          $ref: "#/components/schemas/Urgency"
+      required: [bloodGroup, latitude, longitude, urgency]
+
+    DonorMatch:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        bloodGroup:
+          $ref: "#/components/schemas/BloodGroup"
+        phone:
+          type: string
+        distanceKm:
+          type: number
+        score:
+          type: integer
+        available:
+          type: boolean
+      required: [id, name, bloodGroup, phone, distanceKm, score, available]
+
+    AiChatInput:
+      type: object
+      properties:
+        message:
+          type: string
+        context:
+          type: string
+          nullable: true
+      required: [message]
+
+    AiChatResponse:
+      type: object
+      properties:
+        reply:
+          type: string
+        suggestions:
+          type: array
+          items:
+            type: string
+      required: [reply, suggestions]
+
+    Alert:
+      type: object
+      properties:
+        id:
+          type: integer
+        requestId:
+          type: integer
+        donorName:
+          type: string
+        donorPhone:
+          type: string
+        bloodGroup:
+          $ref: "#/components/schemas/BloodGroup"
+        patientName:
+          type: string
+        urgency:
+          $ref: "#/components/schemas/Urgency"
+        sentAt:
+          type: string
+        distanceKm:
+          type: number
+      required: [id, requestId, donorName, donorPhone, bloodGroup, patientName, urgency, sentAt, distanceKm]

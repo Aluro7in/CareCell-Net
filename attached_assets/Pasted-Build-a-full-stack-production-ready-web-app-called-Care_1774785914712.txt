@@ -1,0 +1,142 @@
+Build a full-stack production-ready web app called "CareCell Network".
+
+GOAL:
+An AI-powered emergency healthcare platform where cancer patients can request blood/platelet donors and nearby donors receive real-time alerts.
+
+TECH STACK:
+- Frontend: React + Tailwind CSS
+- Backend: FastAPI (Python)
+- Database: SQLite (for simplicity, but structured for PostgreSQL)
+- API communication: REST
+- Optional AI: OpenAI API (via environment variable)
+
+PROJECT STRUCTURE:
+
+/carecell-app
+ ├── backend/
+ │     ├── main.py
+ │     ├── database.py
+ │     ├── models/
+ │     ├── routes/
+ │     ├── services/
+ │     ├── schemas/
+ ├── frontend/
+ │     ├── src/
+ │     │     ├── pages/
+ │     │     ├── components/
+ │     │     ├── api/
+ │     │     ├── App.jsx
+ │     ├── index.html
+ │     ├── package.json
+
+BACKEND FEATURES:
+
+1. Donor APIs:
+- POST /donors → register donor
+- GET /donors → list donors
+
+2. Patient Request:
+- POST /requests → create emergency request
+
+3. Matching Engine:
+- Match donors by:
+   blood group
+   distance (Haversine)
+   availability
+- Score:
+   blood = 50
+   distance <5km = 30
+   available = 20
+- Return top 5 donors
+
+4. Alert System:
+- When request created:
+   → match donors
+   → send alert (mock print/log)
+
+5. Hospital API:
+- GET /hospitals → list hospitals
+
+6. AI Assistant:
+- POST /ai/chat
+- Uses OpenAI API (env variable)
+
+FRONTEND FEATURES:
+
+Create a clean modern UI (red + white medical theme):
+
+PAGES:
+
+1. Home Page:
+- App intro
+- Buttons: "I Need Help" / "I Want to Donate"
+
+2. Patient Page:
+- Form:
+   name
+   blood group
+   cancer type
+   location (text input)
+   urgency (normal/critical)
+- Submit request
+- Show matched donors instantly
+
+3. Donor Page:
+- Register form:
+   name
+   blood group
+   location
+   last donation date
+- Toggle availability
+
+4. Dashboard:
+- Show active requests
+- Show alerts
+
+5. AI Assistant Chat:
+- Chat UI
+- Ask questions
+
+COMPONENTS:
+- Navbar
+- Card UI
+- Alert popup
+- Loader
+
+FRONTEND LOGIC:
+
+- Use fetch/axios to connect to backend
+- Show real-time updates (polling every few seconds)
+- Store API URL in config
+
+BONUS:
+- Add loading states
+- Add error handling
+- Add toast notifications
+- Responsive mobile design
+
+DATA:
+- Seed with:
+   5 donors
+   2 hospitals
+
+RUN INSTRUCTIONS:
+
+Backend:
+pip install fastapi uvicorn sqlalchemy pydantic
+uvicorn main:app --reload
+
+Frontend:
+npm install
+npm run dev
+
+FINAL REQUIREMENTS:
+- Fully working app
+- No errors
+- Clean UI
+- Functional APIs connected to frontend
+- Users can:
+   register
+   request help
+   see matched donors
+   view alerts

@@ -1,0 +1,117 @@
+Build a complete production-ready FastAPI backend project called "CareCell Network".
+
+PROJECT GOAL:
+An AI-powered emergency healthcare system that connects cancer patients with blood and platelet donors and nearby hospitals in real-time.
+
+TECH STACK:
+- FastAPI (Python backend)
+- PostgreSQL (via SQLAlchemy ORM)
+- Pydantic for validation
+- Uvicorn server
+- Optional: OpenAI API for AI assistant
+- Use environment variables for all API keys
+
+PROJECT STRUCTURE:
+/carecell
+ ├── main.py
+ ├── database.py
+ ├── config.py
+ ├── models/
+ │     ├── donor.py
+ │     ├── patient.py
+ │     ├── request.py
+ │     ├── hospital.py
+ ├── schemas/
+ │     ├── donor_schema.py
+ │     ├── patient_schema.py
+ │     ├── request_schema.py
+ ├── routes/
+ │     ├── donor_routes.py
+ │     ├── patient_routes.py
+ │     ├── match_routes.py
+ │     ├── hospital_routes.py
+ │     ├── ai_routes.py
+ ├── services/
+ │     ├── matching.py
+ │     ├── notification.py
+ │     ├── ai_assistant.py
+ ├── utils/
+ │     ├── distance.py
+
+DATABASE MODELS:
+1. Donor:
+- id, name, blood_group, latitude, longitude
+- last_donation_date, available, phone
+
+2. Patient:
+- id, name, blood_group, cancer_type
+- latitude, longitude, urgency (normal/critical)
+
+3. Request:
+- id, patient_id, status, created_at
+
+4. Hospital:
+- id, name, location, beds_available, blood_bank_available
+
+CORE FEATURES:
+
+1. DONOR REGISTRATION API:
+POST /donors
+- Register donor with validation
+
+2. PATIENT REQUEST API:
+POST /requests
+- Create emergency request
+
+3. MATCHING ENGINE (IMPORTANT):
+- Filter donors by blood group compatibility
+- Calculate distance using Haversine formula
+- Exclude recent donors (within 90 days)
+- Score system:
+   blood match = 50
+   distance < 5km = 30
+   available = 20
+- Return top 5 donors sorted by score
+
+4. EMERGENCY ALERT SYSTEM:
+- When request is created:
+   → automatically match donors
+   → send alert (mock SMS function)
+- Create notification service (print or log alerts)
+
+5. HOSPITAL FINDER:
+GET /hospitals/nearby
+- Return nearby hospitals based on location
+
+6. AI ASSISTANT (OPTIONAL):
+POST /ai/chat
+- Use OpenAI API
+- Answer queries like:
+   “Find donors near me”
+   “What to do in emergency”
+
+SECURITY:
+- Use environment variables:
+   OPENAI_API_KEY
+   DATABASE_URL
+- Do NOT expose keys in code
+
+UTILITIES:
+- Distance calculation utility (Haversine formula)
+
+STARTUP:
+- Create tables automatically
+- Add sample/mock data (5 donors, 2 hospitals)
+
+BONUS FEATURES:
+- Add urgency priority (critical patients override distance)
+- Add logging
+- Add error handling
+- Add response models (Pydantic schemas)
+
+FINAL REQUIREMENTS:
+- Code must be clean, modular, and runnable
+- Include instructions to run:
+   pip install -r requirements.txt
+   uvicorn main:app --reload
+- Ensure no errors

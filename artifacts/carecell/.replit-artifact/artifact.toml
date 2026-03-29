@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "CareCell Network"
+version = "1.0.0"
+id = "artifacts/carecell"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22535
+
+[services.development]
+run = "pnpm --filter @workspace/carecell run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/carecell", "run", "build" ]
+publicDir = "artifacts/carecell/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22535"
+BASE_PATH = "/"

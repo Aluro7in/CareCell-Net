@@ -1,0 +1,21 @@
+packages:
+  "framer-motion": "Smooth page transitions and component animations"
+  "react-hook-form": "Form state management"
+  "@hookform/resolvers": "Zod validation resolver for forms"
+  "zod": "Schema validation for forms"
+  "date-fns": "Date formatting for donations and requests"
+  "clsx": "Utility for constructing className strings"
+  "tailwind-merge": "Utility to merge tailwind classes"
+
+images:
+  - path: "artifacts/carecell/public/images/hero-bg.png"
+    description: "Abstract medical background in clean white and subtle light red gradients, soft geometric shapes resembling cells or nodes connecting, professional healthcare aesthetic, highly polished"
+    aspect_ratio: "16:9"
+  - path: "artifacts/carecell/public/images/logo.png"
+    description: "Modern minimalist healthcare logo featuring a stylized red cross combined with a tech node or cell network symbol, transparent background, premium design"
+    aspect_ratio: "1:1"
+
+notes:
+  - Using generated API hooks from @workspace/api-client-react
+  - Forms pre-filled with Mumbai coordinates (19.076, 72.877)
+  - Real-time polling enabled on dashboard
