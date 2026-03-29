@@ -1,59 +1,83 @@
 import { Link, useLocation } from "wouter";
-import { HeartPulse, Activity, ShieldAlert, LayoutDashboard, MessageSquare } from "lucide-react";
+import { HeartPulse, Activity, Droplets, Sparkles, Bell, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
 
   const navItems = [
-    { href: "/", label: "Home", icon: Activity },
-    { href: "/patient", label: "Request Help", icon: ShieldAlert },
-    { href: "/donor", label: "Donate", icon: HeartPulse },
-    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/ai", label: "AI Assistant", icon: MessageSquare },
+    { href: "/", label: "Home", icon: Home },
+    { href: "/patient", label: "Request", icon: HeartPulse },
+    { href: "/donor", label: "Donate", icon: Droplets },
+    { href: "/dashboard", label: "Live", icon: Activity },
+    { href: "/ai", label: "AI", icon: Sparkles },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                <HeartPulse className="w-6 h-6 text-primary" />
+    <div className="min-h-screen bg-[#050811] text-foreground flex justify-center overflow-hidden font-sans">
+      <div className="w-full max-w-[430px] min-h-screen relative bg-background flex flex-col shadow-2xl overflow-hidden ring-1 ring-border/50">
+        <header className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-xl border-b border-border/50">
+          <div className="flex items-center justify-between h-16 px-5">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/20">
+                <HeartPulse className="w-4 h-4 text-white" />
               </div>
-              <span className="font-display font-bold text-xl tracking-tight">
-                CareCell<span className="text-primary">Network</span>
+              <span className="font-display font-bold text-xl tracking-tight text-white">
+                CareCell
               </span>
             </Link>
-            
-            <nav className="hidden md:flex items-center gap-1">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = location === item.href;
-                return (
-                  <Link 
-                    key={item.href} 
-                    href={item.href}
-                    className={cn(
-                      "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2",
-                      isActive 
-                        ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
-                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                    )}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
+            <motion.button whileTap={{ scale: 0.9 }} className="relative w-10 h-10 rounded-full flex items-center justify-center bg-card text-muted-foreground border border-border/50 shadow-sm">
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-primary animate-pulse" />
+            </motion.button>
           </div>
-        </div>
-      </header>
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {children}
-      </main>
+        </header>
+
+        <main className="flex-1 w-full overflow-y-auto pb-24 scroll-smooth">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location}
+              initial={{ opacity: 0, y: 15, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -15, scale: 0.98 }}
+              transition={{ duration: 0.4, type: "spring", bounce: 0.2 }}
+              className="h-full"
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
+        </main>
+
+        <nav className="absolute bottom-0 left-0 right-0 z-50 bg-card/90 backdrop-blur-xl border-t border-border/50 pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
+          <div className="flex items-center justify-between px-4 py-3">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location === item.href;
+              return (
+                <Link 
+                  key={item.href} 
+                  href={item.href}
+                  className="relative flex flex-col items-center justify-center w-14 gap-1.5"
+                >
+                  {isActive && (
+                    <motion.div 
+                      layoutId="nav-indicator"
+                      className="absolute -top-3 w-8 h-1 rounded-b-full bg-primary shadow-[0_0_10px_rgba(239,68,68,0.5)]" 
+                    />
+                  )}
+                  <motion.div whileTap={{ scale: 0.85 }}>
+                    <Icon className={cn("w-6 h-6 transition-colors duration-300", isActive ? "text-primary drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" : "text-muted-foreground")} />
+                  </motion.div>
+                  <span className={cn("text-[10px] font-medium transition-colors", isActive ? "text-primary" : "text-muted-foreground")}>
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+      </div>
     </div>
   );
 }

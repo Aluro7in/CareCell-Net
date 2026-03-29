@@ -2,12 +2,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { ShieldAlert, AlertTriangle, ArrowLeft, Phone, MapPin, CheckCircle2 } from "lucide-react";
-import { motion } from "framer-motion";
-import { Layout } from "@/components/layout";
+import { ShieldAlert, AlertTriangle, Phone, MapPin, CheckCircle2, HeartPulse } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useCreateEmergencyRequest } from "@/hooks/use-requests";
-import { BloodGroup, Urgency } from "@workspace/api-client-react";
-import { BloodGroupBadge } from "@/components/blood-group-badge";
 import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
@@ -21,6 +18,7 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
+const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"] as const;
 
 export default function PatientPage() {
   const { toast } = useToast();
@@ -32,13 +30,15 @@ export default function PatientPage() {
     defaultValues: {
       name: "",
       bloodGroup: "O+",
-      cancerType: "Leukemia",
-      latitude: 19.076, // Mumbai default
+      cancerType: "",
+      latitude: 19.076,
       longitude: 72.877,
       urgency: "normal",
       phone: "",
     },
   });
+
+  const isCritical = form.watch("urgency") === "critical";
 
   const onSubmit = async (data: FormValues) => {
     try {
@@ -48,203 +48,179 @@ export default function PatientPage() {
       if (data.urgency === "critical") {
         toast({
           title: "CRITICAL ALERT SENT",
-          description: `Emergency alerts have been dispatched to ${result.matchedDonors?.length || 0} nearby donors.`,
+          description: `Emergency alerts dispatched to ${result.matchedDonors?.length || 0} nearby donors.`,
           variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Request Created",
-          description: `Found ${result.matchedDonors?.length || 0} potential donors.`,
         });
       }
     } catch (err) {
-      toast({
-        title: "Error",
-        description: "Failed to create request. Please try again.",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: "Failed to create request.", variant: "destructive" });
     }
   };
 
-  if (matchResult) {
-    return (
-      <Layout>
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-4xl mx-auto"
-        >
-          <button 
-            onClick={() => setMatchResult(null)}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" /> Back to form
-          </button>
-
-          <div className="bg-card rounded-2xl p-8 border border-border shadow-sm mb-8 text-center">
-            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-              <CheckCircle2 className="w-8 h-8 text-green-600" />
-            </div>
-            <h2 className="text-2xl font-display font-bold mb-2">Request Active</h2>
-            <p className="text-muted-foreground">
-              We found <strong className="text-foreground">{matchResult.matchedDonors?.length || 0}</strong> compatible donors nearby.
-            </p>
-          </div>
-
-          <h3 className="text-xl font-display font-bold mb-4 flex items-center gap-2">
-            <UsersIcon className="w-5 h-5 text-primary" /> Matched Donors
-          </h3>
-          
-          <div className="grid gap-4">
-            {matchResult.matchedDonors?.length > 0 ? (
-              matchResult.matchedDonors.map((donor: any) => (
-                <div key={donor.id} className="bg-card p-5 rounded-xl border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm hover:shadow-md transition-shadow">
-                  <div>
-                    <div className="flex items-center gap-3 mb-1">
-                      <h4 className="font-bold text-lg">{donor.name}</h4>
-                      <BloodGroupBadge group={donor.bloodGroup} />
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5"/> {donor.distanceKm.toFixed(1)} km away</span>
-                      <span className="flex items-center gap-1 font-medium text-primary">Match Score: {donor.score}</span>
-                    </div>
-                  </div>
-                  <a 
-                    href={`tel:${donor.phone}`}
-                    className="flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
-                  >
-                    <Phone className="w-4 h-4" />
-                    Call Donor
-                  </a>
-                </div>
-              ))
-            ) : (
-              <div className="text-center p-12 border-2 border-dashed border-border rounded-2xl text-muted-foreground">
-                No immediate matches found. We will keep searching and alert you.
-              </div>
-            )}
-          </div>
-        </motion.div>
-      </Layout>
-    );
-  }
-
   return (
-    <Layout>
-      <div className="max-w-2xl mx-auto">
-        <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-4">
-            <ShieldAlert className="w-8 h-8 text-red-600" />
-          </div>
-          <h1 className="text-3xl font-display font-bold mb-2">Emergency Blood Request</h1>
-          <p className="text-muted-foreground text-lg">Enter patient details to instantly find nearby compatible donors.</p>
-        </div>
-
-        <form onSubmit={form.handleSubmit(onSubmit)} className="bg-card p-8 rounded-2xl border border-border shadow-lg space-y-6 relative overflow-hidden">
-          {form.watch("urgency") === "critical" && (
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-red-600 animate-pulse" />
-          )}
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Patient Name</label>
-              <input 
-                {...form.register("name")}
-                className="w-full px-4 py-3 rounded-xl border border-input bg-background focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                placeholder="John Doe"
-              />
-              {form.formState.errors.name && <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Blood Group</label>
-              <select 
-                {...form.register("bloodGroup")}
-                className="w-full px-4 py-3 rounded-xl border border-input bg-background focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-              >
-                {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map(bg => (
-                  <option key={bg} value={bg}>{bg}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Cancer Type / Diagnosis</label>
-              <input 
-                {...form.register("cancerType")}
-                className="w-full px-4 py-3 rounded-xl border border-input bg-background focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                placeholder="e.g. Leukemia"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Contact Phone</label>
-              <input 
-                {...form.register("phone")}
-                className="w-full px-4 py-3 rounded-xl border border-input bg-background focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                placeholder="+91 9876543210"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground flex justify-between">
-                <span>Location (Lat/Lng)</span>
-                <span className="text-xs">Mumbai Defaults</span>
-              </label>
-              <div className="flex gap-2">
-                <input 
-                  type="number" step="any"
-                  {...form.register("latitude")}
-                  className="w-full px-4 py-3 rounded-xl border border-input bg-background focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                />
-                <input 
-                  type="number" step="any"
-                  {...form.register("longitude")}
-                  className="w-full px-4 py-3 rounded-xl border border-input bg-background focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2 md:col-span-2 pt-4 border-t border-border">
-              <label className="text-sm font-medium flex items-center gap-2">
-                Urgency Level
-              </label>
-              <div className="grid grid-cols-2 gap-4">
-                <label className={`
-                  flex items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all
-                  ${form.watch("urgency") === "normal" ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:bg-accent/50"}
-                `}>
-                  <input type="radio" value="normal" {...form.register("urgency")} className="hidden" />
-                  <span className="font-semibold">Normal / Scheduled</span>
-                </label>
-                <label className={`
-                  flex items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all
-                  ${form.watch("urgency") === "critical" ? "border-red-600 bg-red-50 text-red-600" : "border-border text-muted-foreground hover:bg-red-50/50"}
-                `}>
-                  <input type="radio" value="critical" {...form.register("urgency")} className="hidden" />
-                  <div className="flex items-center gap-2">
-                    <AlertTriangle className="w-5 h-5" />
-                    <span className="font-semibold">CRITICAL (Immediate)</span>
-                  </div>
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={createRequest.isPending}
-            className="w-full py-4 rounded-xl font-bold text-lg bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none mt-4"
+    <div className="p-5 h-full relative">
+      <AnimatePresence>
+        {matchResult ? (
+          <motion.div 
+            initial={{ opacity: 0, y: "100%" }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: "100%" }}
+            transition={{ type: "spring", bounce: 0, duration: 0.4 }}
+            className="absolute inset-0 z-50 bg-background/95 backdrop-blur-xl flex flex-col pt-safe shadow-2xl"
           >
-            {createRequest.isPending ? "Searching Donors..." : "Find Matches Now"}
-          </button>
-        </form>
-      </div>
-    </Layout>
-  );
-}
+            <div className="flex-1 overflow-y-auto p-5 pb-24">
+              <button 
+                onClick={() => setMatchResult(null)}
+                className="w-12 h-1.5 bg-border rounded-full mx-auto mb-8 block hover:bg-muted-foreground transition-colors"
+              />
+              
+              <div className="bg-card rounded-3xl p-6 border border-border shadow-2xl mb-8 text-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-green-500/5" />
+                <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-4 relative z-10 shadow-[0_0_30px_rgba(34,197,94,0.2)]">
+                  <CheckCircle2 className="w-10 h-10 text-green-500" />
+                </div>
+                <h2 className="text-2xl font-display font-bold mb-2 text-white relative z-10">Request Active</h2>
+                <p className="text-muted-foreground text-sm relative z-10">
+                  Found <strong className="text-white font-bold">{matchResult.matchedDonors?.length || 0}</strong> compatible donors nearby.
+                </p>
+              </div>
 
-// Icon component needed above
-function UsersIcon(props: any) {
-  return <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinelinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <h3 className="text-lg font-display font-bold mb-4 flex items-center gap-2 text-white">
+                <HeartPulse className="w-5 h-5 text-primary" /> Matched Donors
+              </h3>
+              
+              <div className="grid gap-4">
+                {matchResult.matchedDonors?.length > 0 ? (
+                  matchResult.matchedDonors.map((donor: any) => (
+                    <motion.div whileTap={{ scale: 0.98 }} key={donor.id} className="bg-card p-4 rounded-3xl border border-border flex items-center justify-between gap-4 shadow-sm">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center border border-border shrink-0">
+                          <span className="font-bold text-white text-sm">{donor.bloodGroup}</span>
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-white text-base leading-tight">{donor.name}</h4>
+                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                            <MapPin className="w-3 h-3 text-primary"/> 
+                            <span>{donor.distanceKm.toFixed(1)} km away</span>
+                          </div>
+                        </div>
+                      </div>
+                      <a 
+                        href={`tel:${donor.phone}`}
+                        className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors shrink-0"
+                      >
+                        <Phone className="w-5 h-5" />
+                      </a>
+                    </motion.div>
+                  ))
+                ) : (
+                  <div className="text-center p-8 border border-dashed border-border rounded-3xl text-muted-foreground text-sm">
+                    No immediate matches found. We'll keep searching.
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
+            <div className="text-center mb-2">
+              <h1 className="text-2xl font-display font-bold text-white">Emergency Request</h1>
+              <p className="text-muted-foreground text-sm mt-1">Find nearby compatible donors instantly.</p>
+            </div>
+
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {/* Urgency Toggle */}
+              <div className="grid grid-cols-2 gap-2 p-1.5 bg-card border border-border rounded-2xl shadow-sm">
+                <button
+                  type="button"
+                  onClick={() => form.setValue("urgency", "normal")}
+                  className={`py-3 rounded-xl text-sm font-semibold transition-all ${!isCritical ? 'bg-secondary text-white shadow-sm' : 'text-muted-foreground hover:text-white'}`}
+                >
+                  Normal
+                </button>
+                <button
+                  type="button"
+                  onClick={() => form.setValue("urgency", "critical")}
+                  className={`py-3 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 ${isCritical ? 'bg-red-500/20 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.3)] animate-[pulse_2s_ease-in-out_infinite] border border-red-500/30' : 'text-muted-foreground hover:text-white'}`}
+                >
+                  <AlertTriangle className="w-4 h-4" />
+                  CRITICAL
+                </button>
+              </div>
+
+              {/* Form Fields */}
+              <div className="space-y-4">
+                <div className="relative">
+                  <input 
+                    {...form.register("name")}
+                    placeholder="Patient Name"
+                    className="w-full px-5 py-4 rounded-2xl border border-border bg-card/50 text-white placeholder:text-muted-foreground/60 focus:ring-2 focus:ring-primary/50 focus:bg-card outline-none transition-all text-sm shadow-sm"
+                  />
+                  {form.formState.errors.name && <span className="absolute right-4 top-4 text-xs text-primary">{form.formState.errors.name.message}</span>}
+                </div>
+
+                {/* Blood Group Grid */}
+                <div className="space-y-3">
+                  <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider ml-1">Blood Group Needed</label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {bloodGroups.map(bg => (
+                      <button
+                        key={bg}
+                        type="button"
+                        onClick={() => form.setValue("bloodGroup", bg)}
+                        className={`py-3 rounded-2xl text-sm font-bold transition-all border ${
+                          form.watch("bloodGroup") === bg 
+                            ? 'bg-primary border-primary text-white shadow-lg shadow-primary/30 scale-[1.02]' 
+                            : 'bg-card border-border text-muted-foreground hover:border-primary/50 hover:text-white'
+                        }`}
+                      >
+                        {bg}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <input 
+                    {...form.register("cancerType")}
+                    placeholder="Diagnosis"
+                    className="w-full px-5 py-4 rounded-2xl border border-border bg-card/50 text-white placeholder:text-muted-foreground/60 focus:ring-2 focus:ring-primary/50 outline-none transition-all text-sm shadow-sm"
+                  />
+                  <input 
+                    {...form.register("phone")}
+                    placeholder="Phone"
+                    className="w-full px-5 py-4 rounded-2xl border border-border bg-card/50 text-white placeholder:text-muted-foreground/60 focus:ring-2 focus:ring-primary/50 outline-none transition-all text-sm shadow-sm"
+                  />
+                </div>
+
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+                    <MapPin className="w-4 h-4 text-muted-foreground" />
+                  </div>
+                  <input 
+                    readOnly
+                    value="Mumbai, Maharashtra"
+                    className="w-full pl-12 pr-5 py-4 rounded-2xl border border-border bg-card/50 text-white outline-none text-sm cursor-not-allowed opacity-70 shadow-sm"
+                  />
+                </div>
+              </div>
+
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                type="submit"
+                disabled={createRequest.isPending}
+                className={`w-full py-4 rounded-2xl font-bold text-white shadow-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-2 ${
+                  isCritical 
+                    ? 'bg-gradient-to-r from-red-600 to-rose-600 shadow-red-500/30' 
+                    : 'bg-gradient-to-r from-primary to-primary/80 shadow-primary/30'
+                }`}
+              >
+                {createRequest.isPending ? "Searching Donors..." : "Find Matches Now"}
+              </motion.button>
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 }
