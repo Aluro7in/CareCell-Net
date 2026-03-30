@@ -80,14 +80,22 @@ router.post("/ai/chat", async (req, res) => {
   }
 
   try {
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const apiKey = process.env.OPENAI_API_KEY!;
+    const isOpenRouter = apiKey.startsWith("sk-or-");
+
+    const openai = new OpenAI({
+      apiKey,
+      ...(isOpenRouter && { baseURL: "https://openrouter.ai/api/v1" }),
+    });
+
+    const model = isOpenRouter ? "openai/gpt-4o-mini" : "gpt-4o-mini";
 
     const userContent = context
       ? `Context: ${context}\n\nUser question: ${message}`
       : message;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model,
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: userContent },
