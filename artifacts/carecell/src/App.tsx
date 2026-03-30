@@ -9,6 +9,7 @@ import PatientPage from "@/pages/patient";
 import DonorPage from "@/pages/donor";
 import Dashboard from "@/pages/dashboard";
 import AiChat from "@/pages/ai-chat";
+import MapPage from "@/pages/map";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -16,6 +17,7 @@ const queryClient = new QueryClient({
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
+      staleTime: 10_000,
     },
   },
 });
@@ -27,6 +29,7 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/patient" component={PatientPage} />
         <Route path="/donor" component={DonorPage} />
+        <Route path="/map" component={MapPage} />
         <Route path="/dashboard" component={Dashboard} />
         <Route path="/ai" component={AiChat} />
         <Route component={NotFound} />

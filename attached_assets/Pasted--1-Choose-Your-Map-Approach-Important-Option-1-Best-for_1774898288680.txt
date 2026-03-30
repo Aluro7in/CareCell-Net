@@ -1,0 +1,113 @@
+🧱 1. Choose Your Map Approach (Important)
+✅ Option 1 (Best for you right now)
+
+👉 Google Maps (easy + powerful)
+
+🆓 Option 2 (Alternative)
+
+👉 OpenStreetMap + Leaflet (free, no billing)
+
+🔥 Recommendation:
+
+👉 Use Google Maps (better UI + easier demo)
+
+🔑 2. Get Google Maps API Key
+
+Steps:
+
+Go to Google Cloud Console
+Enable:
+Maps JavaScript API
+Distance Matrix API
+Create API key
+
+👉 Add in Replit env:
+
+GOOGLE_MAPS_API_KEY=your_key
+🗺️ 3. Frontend Map Setup (React)
+Install:
+npm install @react-google-maps/api
+Basic Map Component
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+
+const MapComponent = ({ patient, donors }) => {
+  return (
+    <LoadScript googleMapsApiKey="YOUR_API_KEY">
+      <GoogleMap
+        mapContainerStyle={{ width: "100%", height: "400px" }}
+        center={{ lat: patient.lat, lng: patient.lng }}
+        zoom={12}
+      >
+        {/* Patient Marker */}
+        <Marker position={patient} label="P" />
+
+        {/* Donor Markers */}
+        {donors.map((d, i) => (
+          <Marker key={i} position={{ lat: d.lat, lng: d.lng }} label="D" />
+        ))}
+      </GoogleMap>
+    </LoadScript>
+  );
+};
+📍 4. Get User Location (IMPORTANT)
+navigator.geolocation.getCurrentPosition((pos) => {
+  const location = {
+    lat: pos.coords.latitude,
+    lng: pos.coords.longitude,
+  };
+});
+
+👉 Use this for:
+
+Patient location
+Donor location
+📏 5. Calculate Distance (2 Ways)
+✅ Option A (Simple – Backend Haversine)
+import math
+
+def distance(lat1, lon1, lat2, lon2):
+    R = 6371
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+
+    a = math.sin(dlat/2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon/2)**2
+    return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+
+👉 Good for hackathon
+
+🚀 Option B (Google Distance Matrix API)
+
+More accurate (roads, traffic)
+
+import requests
+
+def get_distance(origin, destination):
+    url = f"https://maps.googleapis.com/maps/api/distancematrix/json?origins={origin}&destinations={destination}&key=API_KEY"
+    res = requests.get(url).json()
+    return res["rows"][0]["elements"][0]["distance"]["text"]
+🧭 6. Show Routes (VERY IMPRESSIVE)
+
+Add directions:
+
+import { DirectionsService, DirectionsRenderer } from "@react-google-maps/api";
+
+👉 Show path from:
+
+Patient → Donor
+Patient → Hospital
+🏥 7. Add Hospitals on Map
+
+Same markers:
+
+<Marker position={hospital} label="H" />
+🔥 8. What Your Final Feature Will Look Like
+
+User sees:
+
+📍 Patient location
+🩸 Donors nearby
+🏥 Hospitals nearby
+📏 Distance shown
+🛣️ Route displayed
+
+👉 This = real-world system
