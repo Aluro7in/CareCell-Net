@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "m0rB8kQXJZpr9JjSr2v1_"
+uri = "file://README.md"
+type = "text"
+title = "CareCell Network — Full README"
