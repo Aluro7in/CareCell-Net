@@ -5,6 +5,7 @@
 pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
 
 ## Recent Features Added
+- **ElevenLabs Voice AI (Complete)**: `POST /api/ai/tts` backend route — dynamically resolves available voice from ElevenLabs API (free-tier compatible, caches choice), uses `eleven_multilingual_v2` model. Frontend: auto-plays response audio when voice enabled, per-message speaker button on AI bubbles, animated speaking wave indicator, voice toggle (enabled by default), mic auto-sends transcript. Hindi & English both supported.
 - **JWT Authentication (Complete)**: Full auth system with `POST /api/auth/signup`, `POST /api/auth/login`, `GET /api/auth/me`. Uses `bcryptjs` (pure JS) for password hashing and `jsonwebtoken` for JWT tokens (7-day expiry). JWT_SECRET falls back to SESSION_SECRET env var.
 - **Auth Frontend**: `AuthContext` + `AuthProvider` (`src/context/auth-context.tsx`) with `useAuth()` hook. `LoginPage` (`/login`) and `SignupPage` (`/signup`) — email or phone signup, role selector (Patient/Donor), collapsible T&C accordion with checkbox. Token persisted to `localStorage` as `carecell_token`.
 - **Protected Routing**: All app routes wrapped in `ProtectedRoute` (redirects to `/login?next=...`). Auth pages use `AuthRoute` (redirects authenticated users to `/`). Login/signup pages hide header and bottom nav.

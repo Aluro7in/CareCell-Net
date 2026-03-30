@@ -119,4 +119,86 @@ router.post("/ai/chat", async (req, res) => {
   }
 });
 
+const ttsSchema = z.object({
+  text: z.string().min(1).max(1000),
+});
+
+// Preferred voice names in priority order (premade voices available on free tier)
+const PREFERRED_VOICE_NAMES = ["aria", "jessica", "sarah", "matilda", "laura", "alice", "lily", "charlotte"];
+let cachedVoiceId: string | null = null;
+
+async function resolveVoiceId(apiKey: string, log: any): Promise<string> {
+  if (cachedVoiceId) return cachedVoiceId;
+  try {
+    const res = await fetch("https://api.elevenlabs.io/v1/voices", {
+      headers: { "xi-api-key": apiKey },
+    });
+    if (!res.ok) return "21m00Tcm4TlvDq8ikWAM";
+    const data: any = await res.json();
+    const voices: Array<{ voice_id: string; name: string }> = data.voices ?? [];
+    if (!voices.length) return "21m00Tcm4TlvDq8ikWAM";
+    const preferred = voices.find((v) => PREFERRED_VOICE_NAMES.includes(v.name.toLowerCase()));
+    cachedVoiceId = (preferred ?? voices[0]).voice_id;
+    log.info({ voice: (preferred ?? voices[0]).name, id: cachedVoiceId }, "ElevenLabs voice resolved");
+    return cachedVoiceId;
+  } catch (err) {
+    log.warn({ err }, "Could not resolve ElevenLabs voice, using fallback");
+    return "21m00Tcm4TlvDq8ikWAM";
+  }
+}
+
+router.post("/ai/tts", async (req, res) => {
+  const parsed = ttsSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: "text is required (max 1000 chars)" });
+  }
+
+  const { text } = parsed.data;
+  const apiKey = process.env["ELEVENLABS_API_KEY"];
+
+  if (!apiKey) {
+    return res.status(503).json({ error: "ElevenLabs API key not configured" });
+  }
+
+  try {
+    const voiceId = await resolveVoiceId(apiKey, req.log);
+
+    const elevenRes = await fetch(
+      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
+      {
+        method: "POST",
+        headers: {
+          "xi-api-key": apiKey,
+          "Content-Type": "application/json",
+          Accept: "audio/mpeg",
+        },
+        body: JSON.stringify({
+          text,
+          model_id: "eleven_multilingual_v2",
+          voice_settings: {
+            stability: 0.45,
+            similarity_boost: 0.80,
+            style: 0.15,
+            use_speaker_boost: true,
+          },
+        }),
+      }
+    );
+
+    if (!elevenRes.ok) {
+      const err = await elevenRes.text();
+      req.log.error({ status: elevenRes.status, err }, "ElevenLabs TTS failed");
+      return res.status(502).json({ error: "TTS service error" });
+    }
+
+    const audioBuffer = await elevenRes.arrayBuffer();
+    res.setHeader("Content-Type", "audio/mpeg");
+    res.setHeader("Cache-Control", "no-store");
+    res.send(Buffer.from(audioBuffer));
+  } catch (err) {
+    req.log.error({ err }, "ElevenLabs TTS exception");
+    res.status(500).json({ error: "TTS failed" });
+  }
+});
+
 export default router;
