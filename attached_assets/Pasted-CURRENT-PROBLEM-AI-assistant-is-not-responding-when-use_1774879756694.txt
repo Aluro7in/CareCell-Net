@@ -1,0 +1,102 @@
+CURRENT PROBLEM:
+- AI assistant is not responding when user enters a prompt
+- OpenAI API key is added but no response is returned
+
+GOAL:
+Make a fully working AI assistant with:
+1. Backend OpenAI integration (FastAPI)
+2. Frontend chat UI working correctly
+3. Voice assistant (speech-to-text + text-to-speech)
+4. Hindi and English language support
+5. Speech-to-speech interaction
+
+----------------------------------------
+BACKEND REQUIREMENTS (FastAPI):
+
+1. Create or fix endpoint:
+POST /ai/chat
+
+2. Use latest OpenAI SDK:
+- Import OpenAI
+- Use environment variable OPENAI_API_KEY
+- Do NOT hardcode API key
+
+3. Implement chat logic:
+- Accept JSON: { "message": "user input" }
+- Send to OpenAI model: gpt-4o-mini
+- Return response: { "reply": "AI response" }
+
+4. Add system prompt:
+"You are a helpful healthcare assistant. Reply in the same language as the user (Hindi or English). Keep answers clear and concise."
+
+5. Add error handling:
+- Return proper error messages if API fails
+
+6. Ensure backend runs without errors
+
+----------------------------------------
+FRONTEND REQUIREMENTS (React):
+
+1. Fix chat UI:
+- Input box
+- Send button
+- Display user + AI messages
+
+2. Connect to backend:
+- Call POST /ai/chat
+- Send user message
+- Display response
+
+3. Add loading state while waiting for response
+
+----------------------------------------
+VOICE FEATURES:
+
+1. Speech-to-Text:
+- Use browser SpeechRecognition API
+- Add microphone button
+- Convert voice → text input
+
+2. Text-to-Speech:
+- Use speechSynthesis API
+- Speak AI response automatically
+
+----------------------------------------
+MULTI-LANGUAGE SUPPORT:
+
+1. Detect language:
+- If Hindi characters → use "hi-IN"
+- Else → use "en-IN"
+
+2. Apply language:
+- Speech recognition language
+- Text-to-speech voice language
+- AI should respond in same language
+
+----------------------------------------
+FULL FLOW:
+
+User speaks or types →
+Convert speech to text →
+Send to backend →
+OpenAI generates response →
+Return response →
+Convert text to speech →
+Play audio to user
+
+----------------------------------------
+SECURITY RULES:
+
+- API key must be stored in environment variables
+- Do NOT expose API key in frontend
+- All OpenAI calls must happen in backend only
+
+----------------------------------------
+FINAL REQUIREMENTS:
+
+- Fix current AI issue completely
+- Ensure chat works reliably
+- Ensure voice features work
+- Clean, readable code
+- No runtime errors
+- Fully integrated frontend + backend
