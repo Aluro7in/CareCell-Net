@@ -8,9 +8,11 @@ import alertsRouter from "./alerts.js";
 import aiRouter from "./ai.js";
 import profileRouter from "./profile.js";
 import uploadRouter from "./upload.js";
+import authRouter from "./auth.js";
 
 const router: IRouter = Router();
 
+router.use(authRouter);
 router.use(healthRouter);
 router.use(donorsRouter);
 router.use(patientsRouter);

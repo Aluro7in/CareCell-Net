@@ -1,0 +1,126 @@
+You are working on an existing full-stack CareCell Network app.
+
+IMPORTANT:
+- DO NOT rebuild the project
+- DO NOT change architecture (Express backend + React frontend)
+- ONLY implement authentication (signup + login)
+- DO NOT add profile page or extra features
+
+----------------------------------------
+
+GOAL:
+
+Add a clean and working authentication system using JWT.
+
+----------------------------------------
+
+BACKEND (Express + Drizzle ORM):
+
+1. CREATE USERS TABLE:
+
+Fields:
+- id (primary key)
+- name (string)
+- email or phone (unique)
+- password_hash (string)
+- role ("donor" | "patient")
+- accepted_terms (boolean, required)
+- created_at (timestamp)
+
+----------------------------------------
+
+2. AUTH ROUTES:
+
+Create:
+
+POST /api/auth/signup
+POST /api/auth/login
+
+----------------------------------------
+
+3. SIGNUP LOGIC:
+
+- Validate input
+- REQUIRE accepted_terms = true
+- Hash password using bcrypt
+- Save user in database
+- Return JWT token
+
+If terms not accepted:
+→ return error: "Please accept Terms & Conditions"
+
+----------------------------------------
+
+4. LOGIN LOGIC:
+
+- Verify email/phone and password
+- Return JWT token
+
+----------------------------------------
+
+5. JWT SETUP:
+
+- Create JWT token using secret from environment variable
+- Token should include user id
+
+----------------------------------------
+
+FRONTEND (React):
+
+----------------------------------------
+
+6. CREATE SIGNUP PAGE:
+
+Fields:
+- name
+- email or phone
+- password
+- role (dropdown)
+
+Add:
+- Terms & Conditions checkbox (REQUIRED)
+- Disable submit if unchecked
+
+----------------------------------------
+
+7. CREATE LOGIN PAGE:
+
+Fields:
+- email/phone
+- password
+
+----------------------------------------
+
+8. FRONTEND LOGIC:
+
+- On login/signup success:
+   store token in localStorage
+- Redirect to dashboard
+
+----------------------------------------
+
+TERMS & CONDITIONS TEXT:
+
+Display:
+
+"I agree not to misuse any donor or patient contact information.
+I will not create fake emergency requests.
+I understand this platform is for critical healthcare use.
+Any misuse may result in account suspension."
+
+----------------------------------------
+
+SECURITY:
+
+- Store JWT secret in environment variables
+- Do NOT expose secrets in frontend
+
+----------------------------------------
+
+FINAL REQUIREMENTS:
+
+- Signup must fail if terms not accepted
+- Login must work correctly
+- Token must be stored properly
+- No errors
+- Clean UI (mobile-friendly)

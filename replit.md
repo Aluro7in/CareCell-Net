@@ -5,6 +5,10 @@
 pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
 
 ## Recent Features Added
+- **JWT Authentication (Complete)**: Full auth system with `POST /api/auth/signup`, `POST /api/auth/login`, `GET /api/auth/me`. Uses `bcryptjs` (pure JS) for password hashing and `jsonwebtoken` for JWT tokens (7-day expiry). JWT_SECRET falls back to SESSION_SECRET env var.
+- **Auth Frontend**: `AuthContext` + `AuthProvider` (`src/context/auth-context.tsx`) with `useAuth()` hook. `LoginPage` (`/login`) and `SignupPage` (`/signup`) — email or phone signup, role selector (Patient/Donor), collapsible T&C accordion with checkbox. Token persisted to `localStorage` as `carecell_token`.
+- **Protected Routing**: All app routes wrapped in `ProtectedRoute` (redirects to `/login?next=...`). Auth pages use `AuthRoute` (redirects authenticated users to `/`). Login/signup pages hide header and bottom nav.
+- **Logout**: Logout button (LogOut icon) visible in header when authenticated; clears token and redirects to login.
 - **User Profile System**: Full digital health profile (`GET/PUT /api/profile`) with `profile` DB table — name, role, age, gender, phone, location, blood group, cancer type, stage, allergies, treatment, health notes, reports array, reliability score, avatar URL.
 - **File Upload**: `POST /api/upload` (multer) accepts images + PDFs up to 10 MB; files served at `GET /api/uploads/:filename`; URLs saved to profile `reports` field.
 - **Light/Dark Theme**: `ThemeProvider` + `useTheme` context in `src/context/theme-context.tsx`; persisted to `localStorage`; applies `.dark`/`.light` class to `<html>`; toggle in navbar header.

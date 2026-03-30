@@ -4,3 +4,4 @@ export * from "./hospitals";
 export * from "./requests";
 export * from "./alerts";
 export * from "./profile";
+export * from "./users";
