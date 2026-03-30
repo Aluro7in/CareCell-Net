@@ -2,7 +2,7 @@
 
 An AI-powered emergency healthcare platform connecting cancer patients with blood and platelet donors and nearby hospitals in real time. Built mobile-first for India with full Hindi and English support.
 
----
+---Make UI more premium with better spacing, animations, and visual hierarchy.
 
 ## Table of Contents
 

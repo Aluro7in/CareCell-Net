@@ -42,37 +42,54 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-:root {
-  /* Deep Navy Medical Theme */
-  --background: 225 51% 8%; /* #0A0F1E */
-  --foreground: 210 40% 97%; /* #F1F5F9 */
-  
-  --card: 224 43% 12%; /* #0F1629 */
+/* ─── DARK MODE (default) ─── */
+:root,
+.dark {
+  --background: 225 51% 8%;
+  --foreground: 210 40% 97%;
+  --card: 224 43% 12%;
   --card-foreground: 210 40% 97%;
-  
   --popover: 224 43% 12%;
   --popover-foreground: 210 40% 97%;
-  
-  --primary: 0 84% 60%; /* #EF4444 Vibrant Red */
+  --primary: 0 84% 60%;
   --primary-foreground: 0 0% 100%;
-  
   --secondary: 220 40% 20%;
   --secondary-foreground: 210 40% 97%;
-  
   --muted: 220 40% 20%;
-  --muted-foreground: 215 16% 65%; /* Slate #94A3B8 */
-  
-  --accent: 343 96% 60%; /* #F43F5E Rose */
+  --muted-foreground: 215 16% 65%;
+  --accent: 343 96% 60%;
   --accent-foreground: 0 0% 100%;
-  
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
-  
-  --border: 220 40% 20%; /* #1E2D4A */
+  --border: 220 40% 20%;
   --input: 220 40% 20%;
   --ring: 0 84% 60%;
-  
   --radius: 1rem;
+  --indigo: 239 84% 67%;
+  --green: 142 71% 45%;
+}
+
+/* ─── LIGHT MODE ─── */
+.light {
+  --background: 210 20% 98%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 0 84% 55%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 214 32% 91%;
+  --secondary-foreground: 222 47% 11%;
+  --muted: 214 32% 91%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 343 96% 55%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 55%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 214 32% 88%;
+  --input: 214 32% 88%;
+  --ring: 0 84% 55%;
 }
 
 @layer base {
@@ -81,6 +98,11 @@
   }
   body {
     @apply font-sans antialiased bg-[#050811] text-foreground;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .light body,
+  .light {
+    background-color: hsl(210 20% 98%);
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
@@ -101,5 +123,24 @@
   }
   .pt-safe {
     padding-top: env(safe-area-inset-top, 24px);
+  }
+  .glass {
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+  }
+  .gradient-btn {
+    background: linear-gradient(135deg, #6366f1, #22c55e);
+  }
+  .gradient-btn:hover {
+    background: linear-gradient(135deg, #4f46e5, #16a34a);
+  }
+  .card-shadow {
+    box-shadow: 0 4px 24px -4px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05);
+  }
+  .light .card-shadow {
+    box-shadow: 0 4px 24px -4px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.05);
+  }
+  .score-ring {
+    background: conic-gradient(#6366f1 var(--score-pct), transparent 0);
   }
 }

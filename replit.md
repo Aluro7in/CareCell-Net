@@ -4,6 +4,13 @@
 
 pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
 
+## Recent Features Added
+- **User Profile System**: Full digital health profile (`GET/PUT /api/profile`) with `profile` DB table — name, role, age, gender, phone, location, blood group, cancer type, stage, allergies, treatment, health notes, reports array, reliability score, avatar URL.
+- **File Upload**: `POST /api/upload` (multer) accepts images + PDFs up to 10 MB; files served at `GET /api/uploads/:filename`; URLs saved to profile `reports` field.
+- **Light/Dark Theme**: `ThemeProvider` + `useTheme` context in `src/context/theme-context.tsx`; persisted to `localStorage`; applies `.dark`/`.light` class to `<html>`; toggle in navbar header.
+- **Profile Page** (`/profile`): Score ring (SVG conic), reliability bar + badge (Highly Reliable / Active / Needs Improvement), edit/save form, report upload/download/delete.
+- **Premium UI**: Glassmorphism cards (`.glass`), gradient buttons (`.gradient-btn`), card shadows (`.card-shadow`), 6-tab bottom nav with indigo/emerald gradient indicator, animated theme toggle.
+
 ## Stack
 
 - **Monorepo tool**: pnpm workspaces

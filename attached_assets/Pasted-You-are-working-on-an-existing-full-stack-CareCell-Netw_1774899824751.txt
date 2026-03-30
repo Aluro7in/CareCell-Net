@@ -1,0 +1,179 @@
+You are working on an existing full-stack CareCell Network app.
+
+IMPORTANT:
+- DO NOT rebuild the project
+- DO NOT change architecture (Express backend + React frontend)
+- ONLY enhance and extend current features
+
+----------------------------------------
+
+GOAL:
+
+Add a complete advanced User Profile system + Light/Dark Theme + Premium UI design.
+
+----------------------------------------
+
+FEATURE 1: ADVANCED USER PROFILE
+
+Create a full digital health profile page.
+
+----------------------------------------
+
+BACKEND:
+
+Extend users table:
+
+Add fields:
+- age
+- gender
+- phone
+- location
+- blood_group
+- cancer_type
+- stage
+- allergies
+- treatment
+- health_notes
+- reports (array of file URLs)
+
+Keep existing:
+- reliability_score
+
+----------------------------------------
+
+Create endpoints:
+
+GET /api/profile
+PUT /api/profile
+
+----------------------------------------
+
+File Upload:
+
+- Add upload endpoint:
+  POST /api/upload
+
+- Accept:
+  PDF and images
+
+- Store file URL (local storage or cloud placeholder)
+
+- Save URLs in reports field
+
+----------------------------------------
+
+FRONTEND PROFILE PAGE:
+
+Create a modern profile page with sections:
+
+1. Profile Header:
+- Avatar (default if none)
+- Name
+- Role
+- Reliability score (large + highlighted)
+
+2. Basic Info Card:
+- Age, Gender, Phone, Location
+
+3. Medical Info Card:
+- Blood group
+- Cancer type
+- Stage
+- Allergies
+- Treatment
+
+4. Reports Section:
+- Upload button
+- List of uploaded files
+- File preview / download
+
+5. Health Notes:
+- Editable text area
+
+6. Actions:
+- Edit profile button
+- Save changes
+
+----------------------------------------
+
+FEATURE 2: THEME SYSTEM (LIGHT + DARK)
+
+Implement global theme system:
+
+- Add toggle button in navbar (🌙 / ☀️)
+- Save theme in localStorage
+- Apply "dark" class on <html>
+
+Default:
+- Dark mode
+
+----------------------------------------
+
+FEATURE 3: PREMIUM UI DESIGN
+
+Upgrade entire UI to modern, high-quality design.
+
+----------------------------------------
+
+COLOR SYSTEM:
+
+Dark Mode:
+- Background: #0a0f1e
+- Card: #111827
+- Accent: #6366f1 (indigo)
+- Secondary: #22c55e (green)
+- Danger: #ef4444
+
+Light Mode:
+- Background: #f9fafb
+- Card: #ffffff
+- Accent: #4f46e5
+- Text: #111827
+
+----------------------------------------
+
+DESIGN IMPROVEMENTS:
+
+- Use gradient buttons:
+  linear-gradient(135deg, #6366f1, #22c55e)
+
+- Add:
+  soft shadows
+  rounded corners (xl/2xl)
+  smooth transitions
+  spacing improvements
+
+- Use glassmorphism effect for cards
+
+----------------------------------------
+
+FEATURE 4: RELIABILITY SCORE UI
+
+- Show score visually:
+  progress bar
+  color-coded
+
+Badges:
+- 90+ → Highly Reliable (green)
+- 70–89 → Active (blue)
+- <70 → Needs Improvement (red)
+
+----------------------------------------
+
+FEATURE 5: RESPONSIVENESS
+
+- Ensure mobile-first design
+- Works perfectly on 430px width
+- Clean layout on desktop
+
+----------------------------------------
+
+FINAL REQUIREMENTS:
+
+- No errors
+- Smooth UI animations
+- Clean modern design
+- Profile fully functional
+- Upload works
+- Theme toggle works
+- Everything integrated with existing system
