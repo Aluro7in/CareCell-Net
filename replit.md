@@ -5,6 +5,7 @@
 pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
 
 ## Recent Features Added
+- **FastAPI AI Microservice** (`artifacts/ai-service/main.py`): Standalone Python 3.11 service on port 8000. `POST /ai/chat` — OpenAI/OpenRouter chat with Hindi+English language detection, graceful fallback; `POST /ai/tts` — ElevenLabs TTS with dynamic voice selection; `GET /health`. Swagger UI at `/docs`. Runs alongside the Node.js API server.
 - **ElevenLabs Voice AI (Complete)**: `POST /api/ai/tts` backend route — dynamically resolves available voice from ElevenLabs API (free-tier compatible, caches choice), uses `eleven_multilingual_v2` model. Frontend: auto-plays response audio when voice enabled, per-message speaker button on AI bubbles, animated speaking wave indicator, voice toggle (enabled by default), mic auto-sends transcript. Hindi & English both supported.
 - **JWT Authentication (Complete)**: Full auth system with `POST /api/auth/signup`, `POST /api/auth/login`, `GET /api/auth/me`. Uses `bcryptjs` (pure JS) for password hashing and `jsonwebtoken` for JWT tokens (7-day expiry). JWT_SECRET falls back to SESSION_SECRET env var.
 - **Auth Frontend**: `AuthContext` + `AuthProvider` (`src/context/auth-context.tsx`) with `useAuth()` hook. `LoginPage` (`/login`) and `SignupPage` (`/signup`) — email or phone signup, role selector (Patient/Donor), collapsible T&C accordion with checkbox. Token persisted to `localStorage` as `carecell_token`.

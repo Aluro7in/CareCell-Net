@@ -1,4 +1,4 @@
-modules = ["nodejs-24", "postgresql-16"]
+modules = ["nodejs-24", "postgresql-16", "python-3.11"]
 
 [[artifacts]]
 id = "artifacts/api-server"
@@ -17,6 +17,27 @@ env = { "CI" = "true" }
 [workflows]
 runButton = "Project"
 
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "artifacts/ai-service: FastAPI AI Service"
+
+[[workflows.workflow]]
+name = "artifacts/ai-service: FastAPI AI Service"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd artifacts/ai-service && python3 -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+waitForPort = 8000
+
+[workflows.workflow.metadata]
+outputType = "console"
+
 [agent]
 stack = "PNPM_WORKSPACE"
 expertMode = true
@@ -27,6 +48,7 @@ timeoutMs = 20000
 
 [nix]
 channel = "stable-25_05"
+packages = ["libxcrypt"]
 
 [objectStorage]
 defaultBucketID = "replit-objstore-6ed2e492-1e8f-466f-8979-d4ac6793d2f6"
