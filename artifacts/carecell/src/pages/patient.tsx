@@ -84,7 +84,7 @@ function DonorCard({ donor, rank }: { donor: MatchedDonor; rank: number }) {
         </div>
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h4 className="font-bold text-white text-sm leading-tight truncate">{donor.name}</h4>
+            <h4 className="font-bold text-foreground text-sm leading-tight truncate">{donor.name}</h4>
             <ScoreBadge score={score} />
           </div>
           <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
@@ -274,14 +274,14 @@ export default function PatientPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-display font-bold text-white">Match Results</h2>
+                <h2 className="text-xl font-display font-bold text-foreground">Match Results</h2>
                 <p className="text-muted-foreground text-xs mt-0.5">
                   {matchResult.totalScored} donors scored · {matchResult.topDonors.length} best matches
                 </p>
               </div>
               <button
                 onClick={() => setMatchResult(null)}
-                className="text-xs text-muted-foreground hover:text-white border border-border px-3 py-1.5 rounded-xl transition-colors"
+                className="text-xs text-muted-foreground hover:text-foreground border border-border px-3 py-1.5 rounded-xl transition-colors"
               >
                 New Search
               </button>
@@ -306,7 +306,7 @@ export default function PatientPage() {
                   <div className={`text-sm font-bold ${urgency === "critical" ? "text-red-400" : "text-green-400"}`}>
                     {urgency === "critical" ? "CRITICAL ALERT ACTIVE" : "Request Active"}
                   </div>
-                  <div className="text-white font-semibold mt-0.5">
+                  <div className="text-foreground font-semibold mt-0.5">
                     {bloodGroup} · {location.label}
                   </div>
                 </div>
@@ -323,7 +323,7 @@ export default function PatientPage() {
                   </div>
                   <button
                     onClick={handleSpeakExplanation}
-                    className="flex items-center gap-1.5 text-xs text-primary hover:text-white transition-colors"
+                    className="flex items-center gap-1.5 text-xs text-primary hover:text-foreground transition-colors"
                   >
                     {isSpeaking ? (
                       <><SpeakingWave /><span className="ml-1">Speaking…</span></>
@@ -365,7 +365,7 @@ export default function PatientPage() {
             className="space-y-6"
           >
             <div className="text-center mb-2">
-              <h1 className="text-2xl font-display font-bold text-white">Emergency Request</h1>
+              <h1 className="text-2xl font-display font-bold text-foreground">Emergency Request</h1>
               <p className="text-muted-foreground text-sm mt-1">Find nearby compatible donors instantly.</p>
             </div>
 
@@ -373,12 +373,12 @@ export default function PatientPage() {
               {/* Urgency */}
               <div className="grid grid-cols-2 gap-2 p-1.5 bg-card border border-border rounded-2xl shadow-sm">
                 <button type="button" onClick={() => setUrgency("normal")}
-                  className={`py-3 rounded-xl text-sm font-semibold transition-all ${urgency === "normal" ? "bg-secondary text-white shadow-sm" : "text-muted-foreground hover:text-white"}`}
+                  className={`py-3 rounded-xl text-sm font-semibold transition-all ${urgency === "normal" ? "bg-secondary text-secondary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   Normal
                 </button>
                 <button type="button" onClick={() => setUrgency("critical")}
-                  className={`py-3 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 ${urgency === "critical" ? "bg-red-500/20 text-red-500 border border-red-500/30" : "text-muted-foreground hover:text-white"}`}
+                  className={`py-3 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 ${urgency === "critical" ? "bg-red-500/20 text-red-500 border border-red-500/30" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   <AlertTriangle className="w-4 h-4" /> CRITICAL
                 </button>
@@ -390,7 +390,7 @@ export default function PatientPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Patient Name *"
-                  className="w-full pl-5 pr-14 py-4 rounded-2xl border border-border bg-card/50 text-white placeholder:text-muted-foreground/60 focus:ring-2 focus:ring-primary/50 focus:bg-card outline-none transition-all text-sm shadow-sm"
+                  className="w-full pl-5 pr-14 py-4 rounded-2xl border border-border bg-card/50 text-foreground placeholder:text-muted-foreground/60 focus:ring-2 focus:ring-primary/50 focus:bg-card outline-none transition-all text-sm shadow-sm"
                 />
                 <button
                   type="button"
@@ -399,7 +399,7 @@ export default function PatientPage() {
                   onTouchStart={startMic}
                   onTouchEnd={stopMic}
                   className={`absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center transition-all ${
-                    isListening ? "bg-red-500 text-white animate-pulse" : "bg-secondary text-muted-foreground hover:text-white"
+                    isListening ? "bg-red-500 text-white animate-pulse" : "bg-secondary text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
@@ -423,7 +423,7 @@ export default function PatientPage() {
                       className={`py-3 rounded-2xl text-sm font-bold transition-all border ${
                         bloodGroup === bg
                           ? "bg-primary border-primary text-white shadow-lg shadow-primary/30 scale-[1.02]"
-                          : "bg-card border-border text-muted-foreground hover:border-primary/50 hover:text-white"
+                          : "bg-card border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
                       }`}
                     >
                       {bg}
@@ -437,7 +437,7 @@ export default function PatientPage() {
                 <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
                   <Navigation className={`w-4 h-4 ${location.label.includes("Detecting") ? "text-yellow-400 animate-pulse" : "text-primary"}`} />
                 </div>
-                <div className="w-full pl-12 pr-5 py-4 rounded-2xl border border-border bg-card/50 text-white outline-none text-sm opacity-80 shadow-sm">
+                <div className="w-full pl-12 pr-5 py-4 rounded-2xl border border-border bg-card/50 text-foreground outline-none text-sm opacity-80 shadow-sm">
                   {location.label}
                 </div>
                 {location.label.includes("Detecting") && (

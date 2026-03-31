@@ -34,7 +34,7 @@ export default function Home() {
           <span className="text-[10px] font-bold tracking-wide uppercase">AI-Powered Emergency Network</span>
         </div>
         
-        <h1 className="text-4xl font-display font-extrabold leading-[1.15] tracking-tight mb-4 text-white">
+        <h1 className="text-4xl font-display font-extrabold leading-[1.15] tracking-tight mb-4 text-foreground">
           Connecting Cancer Patients with <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Lifesaving</span> Donors
         </h1>
         <p className="text-muted-foreground text-sm leading-relaxed mb-8">
@@ -67,7 +67,7 @@ export default function Home() {
               <Droplets className="w-5 h-5 text-primary" />
             </div>
             <div className="z-10">
-              <h3 className="font-bold text-white text-lg leading-tight">I Want to<br/>Donate</h3>
+              <h3 className="font-bold text-foreground text-lg leading-tight">I Want to<br/>Donate</h3>
             </div>
           </motion.div>
         </Link>
@@ -76,17 +76,17 @@ export default function Home() {
       {/* Stats */}
       <motion.div variants={item} className="flex items-center justify-between px-2 bg-card/50 p-4 rounded-3xl border border-border">
         <div className="text-center w-full">
-          <p className="text-3xl font-display font-bold text-white">{availableDonors}</p>
+          <p className="text-3xl font-display font-bold text-foreground">{availableDonors}</p>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mt-1">Donors</p>
         </div>
         <div className="w-px h-10 bg-border" />
         <div className="text-center w-full">
-          <p className="text-3xl font-display font-bold text-white">{activeRequests}</p>
+          <p className="text-3xl font-display font-bold text-foreground">{activeRequests}</p>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mt-1">Hospitals</p>
         </div>
         <div className="w-px h-10 bg-border" />
         <div className="text-center w-full">
-          <p className="text-3xl font-display font-bold text-white">14</p>
+          <p className="text-3xl font-display font-bold text-foreground">14</p>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mt-1">Cities</p>
         </div>
       </motion.div>
@@ -98,7 +98,7 @@ export default function Home() {
             <Activity className="w-6 h-6 text-blue-400" />
           </div>
           <div>
-            <h4 className="font-bold text-white text-sm mb-0.5">AI Matching</h4>
+            <h4 className="font-bold text-foreground text-sm mb-0.5">AI Matching</h4>
             <p className="text-xs text-muted-foreground">Finds perfect donor in milliseconds</p>
           </div>
         </div>
@@ -108,7 +108,7 @@ export default function Home() {
             <Bell className="w-6 h-6 text-amber-400" />
           </div>
           <div>
-            <h4 className="font-bold text-white text-sm mb-0.5">Instant Alerts</h4>
+            <h4 className="font-bold text-foreground text-sm mb-0.5">Instant Alerts</h4>
             <p className="text-xs text-muted-foreground">Automated SMS to nearby heroes</p>
           </div>
         </div>
@@ -118,7 +118,7 @@ export default function Home() {
             <MapPin className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <h4 className="font-bold text-white text-sm mb-0.5">Priority Routing</h4>
+            <h4 className="font-bold text-foreground text-sm mb-0.5">Priority Routing</h4>
             <p className="text-xs text-muted-foreground">Direct GPS navigation to hospital</p>
           </div>
         </div>

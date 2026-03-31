@@ -13,6 +13,7 @@ import Dashboard from "@/pages/dashboard";
 import AiChat from "@/pages/ai-chat";
 import MapPage from "@/pages/map";
 import ProfilePage from "@/pages/profile";
+import ChatPage from "@/pages/chat";
 import LoginPage from "@/pages/login";
 import SignupPage from "@/pages/signup";
 import NotFound from "@/pages/not-found";
@@ -55,6 +56,7 @@ function Router() {
         <Route path="/dashboard" component={() => <ProtectedRoute component={Dashboard} />} />
         <Route path="/ai" component={() => <ProtectedRoute component={AiChat} />} />
         <Route path="/profile" component={() => <ProtectedRoute component={ProfilePage} />} />
+        <Route path="/chat" component={() => <ProtectedRoute component={ChatPage} />} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

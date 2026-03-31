@@ -44,7 +44,7 @@ function ScoreRing({ score }: { score: number }) {
         />
       </svg>
       <div className="text-center z-10">
-        <p className="text-2xl font-display font-black text-white">{score}</p>
+        <p className="text-2xl font-display font-black text-foreground">{score}</p>
         <p className="text-[9px] text-muted-foreground uppercase tracking-wider">score</p>
       </div>
     </div>
@@ -189,7 +189,7 @@ export default function ProfilePage() {
 
             {/* Name + role + badge */}
             <div className="flex-1 min-w-0">
-              <h1 className="text-xl font-display font-black text-white truncate">{profile?.name ?? "CareCell User"}</h1>
+              <h1 className="text-xl font-display font-black text-foreground truncate">{profile?.name ?? "CareCell User"}</h1>
               <p className="text-sm text-muted-foreground mt-0.5">{profile?.role ?? "Patient"}</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 <ScoreBadge score={profile?.reliabilityScore ?? 85} />
@@ -211,7 +211,7 @@ export default function ProfilePage() {
           <div className="mt-5 space-y-1.5">
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground font-medium">Reliability Score</span>
-              <span className="font-bold text-white">{profile?.reliabilityScore ?? 85}/100</span>
+              <span className="font-bold text-foreground">{profile?.reliabilityScore ?? 85}/100</span>
             </div>
             <div className="h-2 bg-secondary/50 rounded-full overflow-hidden">
               <motion.div
@@ -246,7 +246,7 @@ export default function ProfilePage() {
             <motion.button
               whileTap={{ scale: 0.96 }}
               onClick={() => setEditing(false)}
-              className="w-14 h-[50px] rounded-2xl border border-border/60 bg-secondary/40 flex items-center justify-center text-muted-foreground hover:text-white transition-colors"
+              className="w-14 h-[50px] rounded-2xl border border-border/60 bg-secondary/40 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
             >
               <X className="w-4 h-4" />
             </motion.button>
@@ -255,7 +255,7 @@ export default function ProfilePage() {
           <motion.button
             whileTap={{ scale: 0.96 }}
             onClick={startEdit}
-            className="flex-1 bg-card border border-border/60 text-white font-semibold py-3.5 rounded-2xl flex items-center justify-center gap-2 hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all text-sm card-shadow"
+            className="flex-1 bg-card border border-border/60 text-foreground font-semibold py-3.5 rounded-2xl flex items-center justify-center gap-2 hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all text-sm card-shadow"
           >
             <Edit3 className="w-4 h-4 text-indigo-400" />
             Edit Profile
@@ -270,7 +270,7 @@ export default function ProfilePage() {
           <div className="w-7 h-7 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
             <User className="w-3.5 h-3.5 text-indigo-400" />
           </div>
-          <h2 className="font-display font-bold text-base text-white">Basic Info</h2>
+          <h2 className="font-display font-bold text-base text-foreground">Basic Info</h2>
         </div>
         {editing ? (
           <div className="grid grid-cols-2 gap-3">
@@ -298,7 +298,7 @@ export default function ProfilePage() {
           <div className="w-7 h-7 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
             <HeartPulse className="w-3.5 h-3.5 text-rose-400" />
           </div>
-          <h2 className="font-display font-bold text-base text-white">Medical Info</h2>
+          <h2 className="font-display font-bold text-base text-foreground">Medical Info</h2>
         </div>
         {editing ? (
           <div className="space-y-3">
@@ -334,7 +334,7 @@ export default function ProfilePage() {
           <div className="w-7 h-7 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
             <Activity className="w-3.5 h-3.5 text-amber-400" />
           </div>
-          <h2 className="font-display font-bold text-base text-white">Health Notes</h2>
+          <h2 className="font-display font-bold text-base text-foreground">Health Notes</h2>
         </div>
         {editing ? (
           <EditField label="Health Notes" name="healthNotes" value={form.healthNotes ?? ""} onChange={handleChange} type="textarea" />
@@ -353,7 +353,7 @@ export default function ProfilePage() {
             <div className="w-7 h-7 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
               <FileText className="w-3.5 h-3.5 text-emerald-400" />
             </div>
-            <h2 className="font-display font-bold text-base text-white">Reports</h2>
+            <h2 className="font-display font-bold text-base text-foreground">Reports</h2>
           </div>
           <motion.button
             whileTap={{ scale: 0.9 }}
@@ -422,7 +422,7 @@ export default function ProfilePage() {
             <div className={cn("w-8 h-8 rounded-xl mx-auto mb-2 flex items-center justify-center border", s.bg, s.color.replace("text-", "border-").replace("400", "400/30"))}>
               <s.icon className={cn("w-4 h-4", s.color)} />
             </div>
-            <p className="text-lg font-display font-black text-white">{s.value}</p>
+            <p className="text-lg font-display font-black text-foreground">{s.value}</p>
             <p className="text-[10px] text-muted-foreground">{s.label}</p>
           </div>
         ))}

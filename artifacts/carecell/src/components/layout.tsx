@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import {
   HeartPulse, Droplets, Sparkles, Sun, Moon,
-  Home, MapPin, User, LogOut
+  Home, MapPin, User, LogOut, MessageCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,6 +18,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     { href: "/patient", label: "Request", icon: HeartPulse },
     { href: "/map", label: "Map", icon: MapPin },
     { href: "/donor", label: "Donate", icon: Droplets },
+    { href: "/chat", label: "Chat", icon: MessageCircle },
     { href: "/ai", label: "AI", icon: Sparkles },
     { href: "/profile", label: "Profile", icon: User },
   ];
