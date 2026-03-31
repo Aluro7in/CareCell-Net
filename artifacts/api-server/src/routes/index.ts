@@ -9,10 +9,12 @@ import aiRouter from "./ai.js";
 import profileRouter from "./profile.js";
 import uploadRouter from "./upload.js";
 import authRouter from "./auth.js";
+import matchRouter from "./match.js";
 
 const router: IRouter = Router();
 
 router.use(authRouter);
+router.use(matchRouter);
 router.use(healthRouter);
 router.use(donorsRouter);
 router.use(patientsRouter);

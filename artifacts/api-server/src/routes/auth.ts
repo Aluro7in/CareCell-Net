@@ -1,4 +1,4 @@
-import { Router, type IRouter } from "express";
+import { Router, type IRouter, type Request, type Response, type NextFunction } from "express";
 import { db, usersTable } from "@workspace/db";
 import { eq, or } from "drizzle-orm";
 import bcrypt from "bcryptjs";
@@ -9,6 +9,20 @@ const router: IRouter = Router();
 
 const JWT_SECRET = process.env["JWT_SECRET"] ?? process.env["SESSION_SECRET"] ?? "carecell_dev_secret_change_in_production";
 const JWT_EXPIRES = "7d";
+
+export function requireAuth(req: Request, res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "No token provided" });
+  }
+  try {
+    const payload = jwt.verify(authHeader.slice(7), JWT_SECRET) as { userId: number };
+    (req as any).userId = payload.userId;
+    next();
+  } catch {
+    res.status(401).json({ error: "Invalid or expired token" });
+  }
+}
 
 const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),

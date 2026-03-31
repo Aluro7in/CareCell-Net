@@ -52,6 +52,7 @@ function makeIcon(label: string, color: string, size = 36) {
 
 const patientIcon = makeIcon("P", "#EF4444");
 const donorIcon = makeIcon("D", "#3B82F6");
+const matchedDonorIcon = makeIcon("★", "#F59E0B", 42);
 const hospitalIcon = makeIcon("H", "#10B981");
 const userIcon = makeIcon("Me", "#8B5CF6", 40);
 
@@ -82,6 +83,19 @@ export default function MapPage() {
   const { data: hospitals = [] } = useListHospitals();
   const { data: patients = [] } = useListPatients();
   const MUMBAI: [number, number] = [19.076, 72.877];
+
+  const [matchedDonorIds, setMatchedDonorIds] = useState<Set<number>>(new Set());
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem("carecell_match_donors");
+      if (stored) {
+        const parsed = JSON.parse(stored) as Array<{ id?: number }>;
+        setMatchedDonorIds(new Set(parsed.map((d) => d.id).filter(Boolean) as number[]));
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   const getLocation = useCallback(() => {
     if (!navigator.geolocation) {
@@ -227,11 +241,12 @@ export default function MapPage() {
           {/* Donors */}
           {donors.map((donor) => {
             const dist = distFrom(donor.latitude, donor.longitude);
+            const isMatched = matchedDonorIds.has(donor.id);
             return (
               <Marker
                 key={`donor-${donor.id}`}
                 position={[donor.latitude, donor.longitude]}
-                icon={donorIcon}
+                icon={isMatched ? matchedDonorIcon : donorIcon}
                 eventHandlers={{
                   click: () =>
                     setSelected({
@@ -310,6 +325,7 @@ export default function MapPage() {
               {[
                 { color: "#EF4444", label: "P", text: "Patient Request" },
                 { color: "#3B82F6", label: "D", text: "Blood Donor" },
+                { color: "#F59E0B", label: "★", text: "AI Matched Donor" },
                 { color: "#10B981", label: "H", text: "Hospital" },
                 { color: "#8B5CF6", label: "Me", text: "Your Location" },
               ].map((item) => (

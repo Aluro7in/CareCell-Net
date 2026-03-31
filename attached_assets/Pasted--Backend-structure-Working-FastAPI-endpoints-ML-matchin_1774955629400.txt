@@ -1,0 +1,195 @@
+✅ Backend structure
+✅ Working FastAPI endpoints
+✅ ML + matching integration
+✅ OpenRouter AI connection
+
+👉 You can plug this directly into your React app.
+
+🧱 1. FINAL BACKEND STRUCTURE
+
+Create this in your Python project:
+
+/backend
+ ├── main.py
+ ├── ml/
+ │     ├── model.pkl
+ │     ├── predict.py
+ ├── services/
+ │     ├── matching.py
+ │     ├── ai_explain.py
+ ├── utils/
+ │     ├── distance.py
+ ├── data/
+ │     ├── donors.json
+⚡ 2. LOAD ML MODEL
+📄 ml/predict.py
+import joblib
+
+model = joblib.load("ml/model.pkl")
+
+def predict_donor_score(features):
+    prob = model.predict_proba([features])[0][1]
+    return prob
+📏 3. DISTANCE FUNCTION
+📄 utils/distance.py
+import math
+
+def get_distance(lat1, lon1, lat2, lon2):
+    R = 6371
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+
+    a = math.sin(dlat/2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon/2)**2
+    return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+🔥 4. MATCHING ENGINE
+📄 services/matching.py
+from ml.predict import predict_donor_score
+from utils.distance import get_distance
+
+def calculate_base_score(donor, patient):
+    score = 0
+
+    if donor["blood_group"] == patient["blood_group"]:
+        score += 50
+
+    distance = get_distance(
+        donor["lat"], donor["lng"],
+        patient["lat"], patient["lng"]
+    )
+
+    if distance < 5:
+        score += 30
+    elif distance < 50:
+        score += 20
+
+    if donor["available"]:
+        score += 20
+
+    return score, distance
+
+
+def final_score(donor, patient):
+    base_score, distance = calculate_base_score(donor, patient)
+
+    features = [
+        distance,
+        1 if donor["blood_group"] == patient["blood_group"] else 0,
+        donor.get("hla_match", 0),
+        donor["reliability_score"],
+        donor["last_donation_days"],
+        donor["response_history"]
+    ]
+
+    ml_score = predict_donor_score(features)
+
+    return base_score * 0.7 + ml_score * 100 * 0.3
+
+
+def find_best_donors(patient, donors):
+    ranked = sorted(
+        donors,
+        key=lambda d: final_score(d, patient),
+        reverse=True
+    )
+
+    return ranked[:5]
+🤖 5. OPENROUTER AI EXPLANATION
+📄 services/ai_explain.py
+import requests
+import os
+
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+
+def explain(patient, donors):
+    prompt = f"""
+Patient needs {patient['blood_group']} blood.
+
+Top donors:
+{donors}
+
+Explain why these donors are best matches.
+"""
+
+    res = requests.post(
+        "https://openrouter.ai/api/v1/chat/completions",
+        headers={
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        },
+        json={
+            "model": "openai/gpt-4o-mini",
+            "messages": [{"role": "user", "content": prompt}],
+        }
+    )
+
+    return res.json()["choices"][0]["message"]["content"]
+🚀 6. MAIN FASTAPI APP
+📄 main.py
+from fastapi import FastAPI
+import json
+
+from services.matching import find_best_donors
+from services.ai_explain import explain
+
+app = FastAPI()
+
+# Load donors (mock data)
+with open("data/donors.json") as f:
+    donors = json.load(f)
+
+
+@app.post("/match")
+async def match(patient: dict):
+    best = find_best_donors(patient, donors)
+
+    explanation = explain(patient, best)
+
+    return {
+        "top_donors": best,
+        "explanation": explanation
+    }
+🧪 7. TEST API
+
+Run:
+
+uvicorn main:app --reload
+
+Test:
+
+POST /match
+
+{
+  "blood_group": "A+",
+  "lat": 28.6,
+  "lng": 77.2
+}
+🔗 8. CONNECT TO YOUR REACT APP
+const res = await fetch("http://localhost:8000/match", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(patientData),
+});
+
+const data = await res.json();
+🧠 9. FULL SYSTEM FLOW
+User request
+   ↓
+FastAPI /match
+   ↓
+Matching engine
+   ↓
+ML model prediction
+   ↓
+Rank donors
+   ↓
+OpenRouter AI explanation
+   ↓
+Frontend displays result
+💥 FINAL RESULT
+
+You now have:
+
+✅ Real backend API
+✅ ML-powered ranking
+✅ Smart donor selection
+✅ AI explanation
+✅ Ready for frontend

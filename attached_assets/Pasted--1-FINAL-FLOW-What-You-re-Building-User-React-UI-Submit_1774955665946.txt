@@ -1,0 +1,161 @@
+🧠 1. FINAL FLOW (What You’re Building)
+User (React UI)
+   ↓
+Submit patient request
+   ↓
+FastAPI (/match)
+   ↓
+ML + Matching + AI
+   ↓
+Return top donors + explanation
+   ↓
+Display in UI + Map + Voice
+⚙️ 2. FRONTEND API CONNECT (React)
+📄 Create API file
+
+src/api/match.js
+
+const API_URL = "http://localhost:8000";
+
+export const matchDonors = async (patientData) => {
+  const res = await fetch(`${API_URL}/match`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(patientData),
+  });
+
+  return res.json();
+};
+🧾 3. PATIENT REQUEST FORM
+📄 PatientPage.jsx
+import { useState } from "react";
+import { matchDonors } from "../api/match";
+
+export default function PatientPage() {
+  const [form, setForm] = useState({
+    blood_group: "",
+    lat: "",
+    lng: "",
+  });
+
+  const [result, setResult] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const data = await matchDonors(form);
+    setResult(data);
+  };
+
+  return (
+    <div>
+      <h2>Find Donors</h2>
+
+      <form onSubmit={handleSubmit}>
+        <input
+          placeholder="Blood Group"
+          onChange={(e) => setForm({ ...form, blood_group: e.target.value })}
+        />
+
+        <input
+          placeholder="Latitude"
+          onChange={(e) => setForm({ ...form, lat: e.target.value })}
+        />
+
+        <input
+          placeholder="Longitude"
+          onChange={(e) => setForm({ ...form, lng: e.target.value })}
+        />
+
+        <button type="submit">Search</button>
+      </form>
+
+      {result && (
+        <div>
+          <h3>Top Donors</h3>
+
+          {result.top_donors.map((d, i) => (
+            <div key={i}>
+              <p>{d.name}</p>
+              <p>{d.blood_group}</p>
+              <p>Score: {d.reliability_score}</p>
+            </div>
+          ))}
+
+          <h4>AI Explanation</h4>
+          <p>{result.explanation}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+📍 4. AUTO GET USER LOCATION (IMPORTANT)
+
+Replace manual lat/lng:
+
+navigator.geolocation.getCurrentPosition((pos) => {
+  setForm({
+    ...form,
+    lat: pos.coords.latitude,
+    lng: pos.coords.longitude,
+  });
+});
+🗺️ 5. SHOW ON MAP (Leaflet or Google Maps)
+
+Use your existing map:
+
+// Example marker
+donors.map((d) => (
+  <Marker position={[d.lat, d.lng]} />
+));
+🔊 6. ADD VOICE OUTPUT (ElevenLabs)
+
+After getting result:
+
+const speak = async (text) => {
+  const res = await fetch("/api/ai/tts", {
+    method: "POST",
+    body: JSON.stringify({ text }),
+  });
+
+  const blob = await res.blob();
+  const audio = new Audio(URL.createObjectURL(blob));
+  audio.play();
+};
+
+// Call after result
+speak(result.explanation);
+🎤 7. ADD VOICE INPUT (MIC)
+const startListening = () => {
+  const recognition =
+    new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+  recognition.lang = "en-IN";
+
+  recognition.onresult = (e) => {
+    const text = e.results[0][0].transcript;
+
+    setForm({
+      ...form,
+      blood_group: text, // simple example
+    });
+  };
+
+  recognition.start();
+};
+⚠️ 8. IMPORTANT FIXES (DON’T SKIP)
+CORS FIX (FastAPI)
+
+In your main.py:
+
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)

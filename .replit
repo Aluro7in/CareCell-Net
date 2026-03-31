@@ -48,7 +48,7 @@ timeoutMs = 20000
 
 [nix]
 channel = "stable-25_05"
-packages = ["libxcrypt"]
+packages = ["glibcLocales", "libxcrypt"]
 
 [objectStorage]
 defaultBucketID = "replit-objstore-6ed2e492-1e8f-466f-8979-d4ac6793d2f6"
