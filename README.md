@@ -2,8 +2,6 @@
 
 An AI-powered emergency healthcare platform connecting cancer patients with blood and platelet donors and nearby hospitals in real time. Built mobile-first for India with full Hindi and English support.
 
----Make UI more premium with better spacing, animations, and visual hierarchy.
-
 ## Table of Contents
 
 1. [Overview](#overview)
@@ -100,7 +98,7 @@ The application is designed for a 430 px mobile-first viewport with a dark navy 
 | Runtime | Node.js (ESM) |
 | Framework | Express 5 |
 | Database ORM | Drizzle ORM |
-| Database | PostgreSQL (Replit managed) |
+| Database | PostgreSQL |
 | Validation | Zod (all routes) |
 | AI Client | openai SDK 6.33 → OpenRouter proxy |
 | Logging | Pino + pino-http |
@@ -519,10 +517,11 @@ The sticky header is hidden on the `/map` page (`isMapPage` flag in `layout.tsx`
 
 | Variable | Required | Description |
 |---|---|---|
-| `DATABASE_URL` | Yes | PostgreSQL connection string (managed by Replit) |
-| `PORT` | Yes | Server port (assigned by Replit per artifact) |
+| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `PORT` | Yes | Server port for each service |
 | `OPENAI_API_KEY` | Yes | OpenRouter API key (prefix `sk-or-v1`) |
-| `SESSION_SECRET` | Yes | Secret for session management |
+| `ELEVENLABS_API_KEY` | Yes | ElevenLabs API key for TTS |
+| `SESSION_SECRET` | Yes | Secret for JWT token signing |
 
 ---
 
